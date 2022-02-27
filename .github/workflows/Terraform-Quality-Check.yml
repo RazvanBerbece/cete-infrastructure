@@ -17,6 +17,15 @@ jobs:
 
       - uses: actions/checkout@v2
 
+      - name: Export GitHub Secrets To secrets.tfvars
+        run: |
+          touch secrets.tfvars
+          echo -e "ARM_CLIENT_ID       = \"${{ secrets.ARM_CLIENT_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_CLIENT_SECRET   = \"${{ secrets.ARM_CLIENT_SECRET }}\"" >> secrets.tfvars
+          echo -e "ARM_SUBSCRIPTION_ID = \"${{ secrets.ARM_SUBSCRIPTION_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_TENANT_ID       = \"${{ secrets.ARM_TENANT_ID }}\"" >> secrets.tfvars
+          cat secrets.tfvars
+
       # Install Terraform & Terraform Cloud on the job woker + authenticate with the CLOUD TOKEN
       - name: Install Terraform & Authenticate on Terraform Cloud
         uses: hashicorp/setup-terraform@v1
