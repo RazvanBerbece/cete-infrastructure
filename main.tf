@@ -12,7 +12,7 @@ terraform {
     organization = "AntonioBerbece"
 
     workspaces {
-      name = "cete-infra"
+      name = "cete-${var.ENVIRONMENT}-infra"
     }
   }
 
