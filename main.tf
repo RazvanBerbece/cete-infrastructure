@@ -94,6 +94,7 @@ resource "azurerm_function_app" "cete-function-app" {
   app_service_plan_id        = azurerm_app_service_plan.cete-func-service-plan.id
   storage_account_name       = azurerm_storage_account.cete-storage-account.name
   storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
+  os_type = "linux"
 
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"       = "node",
