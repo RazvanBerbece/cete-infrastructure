@@ -1,0 +1,50 @@
+name: Terraform-Infrastructure-Integration
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+
+  terraform:
+
+    name: Terraform Integration
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Export GitHub Secrets To secrets.tfvars
+        run: |
+          touch secrets.tfvars
+          echo -e "ARM_CLIENT_ID       = \"${{ secrets.ARM_CLIENT_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_CLIENT_SECRET   = \"${{ secrets.ARM_CLIENT_SECRET }}\"" >> secrets.tfvars
+          echo -e "ARM_SUBSCRIPTION_ID = \"${{ secrets.ARM_SUBSCRIPTION_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_TENANT_ID       = \"${{ secrets.ARM_TENANT_ID }}\"" >> secrets.tfvars
+          cat secrets.tfvars
+
+      # Install Terraform & Terraform Cloud on the job woker + authenticate with the CLOUD TOKEN
+      - name: Install Terraform & Authenticate on Terraform Cloud
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.6
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+      
+      # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
+      # Initialised on the 'cete-api-default' workspace. TF will switch the workspace when needed (ie applying) 
+      - name: Run 'terraform init'
+        id: init
+        env:
+          TF_WORKSPACE: cete-api-default
+        run: |
+          terraform init
+
+      # On PUSH events to the main branch, APPLY the generated Terraform plan to the correct environment
+      # Changes workspace based on branch : staging = cete-stg-infra; main = cete-prd-infra
+      - name: Run 'terraform apply' (prd)
+        run: |
+          terraform workspace select cete-prd-infra
+          terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
