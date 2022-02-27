@@ -43,10 +43,10 @@ jobs:
       - name: Run 'terraform apply' (stg)
         if: github.ref == 'refs/heads/staging'
         run: |
-        terraform workspace select cete-stg-infra
-        terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+          terraform workspace select cete-stg-infra
+          terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
       - name: Run 'terraform apply' (prd)
         if: github.ref == 'refs/heads/main'
         run: |
-        terraform workspace select cete-prd-infra
-        terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
+          terraform workspace select cete-prd-infra
+          terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
