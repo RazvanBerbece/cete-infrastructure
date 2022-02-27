@@ -2,7 +2,7 @@ name: Terraform-Quality-Check
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, staging ]
 
   workflow_dispatch:
 

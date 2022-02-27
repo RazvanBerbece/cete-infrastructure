@@ -2,7 +2,7 @@ name: Terraform-Infrastructure-Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, staging ]
 
   workflow_dispatch:
 
