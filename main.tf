@@ -67,7 +67,7 @@ resource "azurerm_app_service_plan" "cete-func-service-plan" {
   reserved            = false
 
   sku {
-    tier = "Basic"
+    tier = "Free"
     size = "S1"
   }
 
