@@ -41,9 +41,10 @@ jobs:
       # Also create a default environment workspace until needed to switch
       - name: Run 'terraform init'
         id: init
+        env:
+          TF_WORKSPACE: cete-api-default
         run: |
           terraform init
-          terraform workspace new default
       
       # Check that main.tf is syntactically correct & indented 
       - name: Run 'terraform validate'
