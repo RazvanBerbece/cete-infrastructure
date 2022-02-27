@@ -38,9 +38,13 @@ jobs:
         run: terraform fmt -check
       
       # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
+      # Initialised on the 'cete-api-default' workspace. TF will switch the workspace when needed (ie applying) 
       - name: Run 'terraform init'
         id: init
-        run: terraform init
+        env:
+          TF_WORKSPACE: cete-api-default
+        run: |
+          terraform init
       
       # Check that main.tf is syntactically correct & indented 
       - name: Run 'terraform validate'
@@ -54,12 +58,16 @@ jobs:
       - name: Run 'terraform plan' (stg)
         if: github.ref == 'refs/heads/staging'
         id: plan
-        run: terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+        run: |
+          terraform workspace select cete-stg-infra
+          terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
       # If the PR is to 'main', it will plan using the current prod state
       - name: Run 'terraform plan' (prd)
         if: github.ref == 'refs/heads/main'
         id: plan
-        run: terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
+        run: |
+          terraform workspace select cete-prd-infra
+          terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
       
       # On PR events, comment on the PR with the terraform step statuses
       # The always() allows this step to run regardless of whether the steps above failed, as we want to see which stage failed
