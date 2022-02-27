@@ -1,4 +1,4 @@
-name: Terraform-Infrastructure-Integration
+name: terraform-prd-infra-deploy
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
 
   terraform:
 
-    name: Terraform Integration
+    name: Terraform Integration (prd)
     runs-on: ubuntu-latest
 
     steps:
