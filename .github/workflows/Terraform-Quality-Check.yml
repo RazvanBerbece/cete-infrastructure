@@ -38,9 +38,12 @@ jobs:
         run: terraform fmt -check
       
       # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
+      # Also select the staging environment workspace until told otherwise
       - name: Run 'terraform init'
         id: init
-        run: terraform init
+        run: |
+          terraform workspace select cete-stg-infra
+          terraform init
       
       # Check that main.tf is syntactically correct & indented 
       - name: Run 'terraform validate'
