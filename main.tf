@@ -1,9 +1,11 @@
+# terraform/main.tf
+
 #
 # This file describes the infrastructure of the Cete app
 # It builds & maintains both a staging and a production environment
 #
 
-# Configure the Azure provider & Terraform Cloud
+#################################### INIT AZURE PROVIDER & TERRAFORM CLOUD ####################################
 terraform {
   # Terraform Cloud block
   cloud {
@@ -25,7 +27,7 @@ terraform {
   required_version = ">= 1.1.0" # force minimum vers 1.1.0 on the Terraform version
 }
 
-# Pass Azure configs (secret keys, tokens, etc.) to Azure provider
+#################################### PASS VARS TO AZURE ####################################
 provider "azurerm" {
   features {}
 
@@ -35,46 +37,47 @@ provider "azurerm" {
   client_secret   = var.ARM_CLIENT_SECRET
 }
 
-# CREATE RESOURCES #
-
-# STAGING
-resource "azurerm_resource_group" "cete-stg-rg" {
-  name     = "cete-stg-rg"
+#################################### CREATE RESOURCES ####################################
+resource "azurerm_resource_group" "cete-rg" {
+  name     = "cete-${var.ENVIRONMENT}-rg"
   location = "centralus"
   tags = {
-    Environment = "Staging"
+    environment = "${var.ENVIRONMENT}"
   }
 }
 
-resource "azurerm_storage_account" "cete-stg-storage-account" {
-  name                     = "cetestgstorageacc"
-  resource_group_name      = azurerm_resource_group.cete-stg-rg.name
-  location                 = azurerm_resource_group.cete-stg-rg.location
+resource "azurerm_storage_account" "cete-storage-account" {
+  name                     = "cete${var.ENVIRONMENT}storageacc"
+  resource_group_name      = azurerm_resource_group.cete-rg.name
+  location                 = azurerm_resource_group.cete-rg.location
   account_tier             = "Standard"
   account_replication_type = "GRS"
 
   tags = {
-    environment = "Staging"
+    environment = "${var.ENVIRONMENT}"
   }
 }
 
-# LIVE
-resource "azurerm_resource_group" "cete-prd-rg" {
-  name     = "cete-prd-rg"
-  location = "centralus"
-  tags = {
-    Environment = "Production"
+resource "azurerm_app_service_plan" "cete-func-service-plan" {
+  name                = "cete-func-${var.ENVIRONMENT}-service-plan"
+  location            = azurerm_resource_group.cete-rg.location
+  resource_group_name = azurerm_resource_group.cete-rg.name
+
+  sku {
+    tier = "Basic"
+    size = "S1"
   }
 }
 
-resource "azurerm_storage_account" "cete-prd-storage-account" {
-  name                     = "ceteprodstorageacc"
-  resource_group_name      = azurerm_resource_group.cete-prd-rg.name
-  location                 = azurerm_resource_group.cete-prd-rg.location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
+resource "azurerm_function_app" "cete-function-app" {
+  name                       = "cete-${var.ENVIRONMENT}-api"
+  location                   = azurerm_resource_group.cete-rg.location
+  resource_group_name        = azurerm_resource_group.cete-rg.name
+  app_service_plan_id        = azurerm_app_service_plan.cete-func-service-plan.id
+  storage_account_name       = azurerm_storage_account.cete-storage-account.name
+  storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
 
   tags = {
-    environment = "Production"
+    environment = "${var.ENVIRONMENT}"
   }
 }
