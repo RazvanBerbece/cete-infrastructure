@@ -1,0 +1,59 @@
+name: Terraform-Infrastructure-Integration
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+
+  terraform:
+
+    name: Terraform Integration
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Export GitHub Secrets To secrets.tfvars
+        run: |
+          touch secrets.tfvars
+          echo -e "ARM_CLIENT_ID       = \"${{ secrets.ARM_CLIENT_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_CLIENT_SECRET   = \"${{ secrets.ARM_CLIENT_SECRET }}\"" >> secrets.tfvars
+          echo -e "ARM_SUBSCRIPTION_ID = \"${{ secrets.ARM_SUBSCRIPTION_ID }}\"" >> secrets.tfvars
+          echo -e "ARM_TENANT_ID       = \"${{ secrets.ARM_TENANT_ID }}\"" >> secrets.tfvars
+          cat secrets.tfvars
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SERVICE_PROVIDER_TOKEN }}
+
+      # Install Terraform & Terraform Cloud on the job woker + authenticate with the CLOUD TOKEN
+      - name: Install Terraform & Authenticate on Terraform Cloud
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.6
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+      
+      # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
+      - name: Run 'terraform init'
+        id: init
+        run: terraform init
+
+      # Generate Terraform plan on PR events.
+      # main.tf also defines a Cloud block, so this step triggers a remote plan run in Terraform Cloud 
+      # When the PR is merged, 'terraform apply' will run
+      - name: Run 'terraform plan'
+        id: plan
+        run: terraform plan -var-file="secrets.tfvars"
+      
+      # Fail the workflow with an error if the outcome of 'terraform plan' is an error
+      - name: Check For 'failure' In Terraform Plan Status
+        if: steps.plan.outcome == 'failure' && always()
+        run: exit 1
+
+      # On PUSH events to the main branch, APPLY the generated Terraform plan
+      - name: Run 'terraform apply'
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve -var-file="secrets.tfvars"
