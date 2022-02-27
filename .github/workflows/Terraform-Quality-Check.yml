@@ -42,7 +42,6 @@ jobs:
       - name: Run 'terraform init'
         id: init
         run: |
-          terraform workspace select cete-stg-infra
           terraform init
       
       # Check that main.tf is syntactically correct & indented 

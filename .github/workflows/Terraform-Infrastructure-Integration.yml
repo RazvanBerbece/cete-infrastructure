@@ -38,7 +38,6 @@ jobs:
       - name: Run 'terraform init'
         id: init
         run: |
-          terraform workspace select cete-stg-infra
           terraform init
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
