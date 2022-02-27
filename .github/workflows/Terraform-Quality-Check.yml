@@ -2,7 +2,7 @@ name: Terraform-Quality-Check
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, staging ]
 
   workflow_dispatch:
 
@@ -50,9 +50,16 @@ jobs:
       # Generate Terraform plan on PR events.
       # main.tf also defines a Cloud block, so this step triggers a remote plan run in Terraform Cloud 
       # When the PR is merged, 'terraform apply' will run
-      - name: Run 'terraform plan'
+      # If the PR is to the 'staging' it will plan using the current staging state
+      - name: Run 'terraform plan' (stg)
+        if: github.ref == 'refs/heads/staging'
         id: plan
-        run: terraform plan -var-file="secrets.tfvars"
+        run: terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+      # If the PR is to 'main', it will plan using the current prod state
+      - name: Run 'terraform plan' (prd)
+        if: github.ref == 'refs/heads/main'
+        id: plan
+        run: terraform plan -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
       
       # On PR events, comment on the PR with the terraform step statuses
       # The always() allows this step to run regardless of whether the steps above failed, as we want to see which stage failed

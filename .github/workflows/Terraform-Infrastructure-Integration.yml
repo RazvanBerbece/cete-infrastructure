@@ -2,7 +2,7 @@ name: Terraform-Infrastructure-Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, staging ]
 
   workflow_dispatch:
 
@@ -37,13 +37,11 @@ jobs:
       - name: Run 'terraform init'
         id: init
         run: terraform init
-      
-      # Fail the workflow with an error if the outcome of 'terraform plan' is an error
-      - name: Check For 'failure' In Terraform Plan Status
-        if: steps.plan.outcome == 'failure' && always()
-        run: exit 1
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
-      - name: Run 'terraform apply'
+      - name: Run 'terraform apply' (stg)
+        if: github.ref == 'refs/heads/staging'
+        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+      - name: Run 'terraform apply' (prd)
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -var-file="secrets.tfvars"
+        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
