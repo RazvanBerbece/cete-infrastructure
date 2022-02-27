@@ -1,4 +1,4 @@
-name: Terraform-Quality-Check
+name: terraform-quality-check
 
 on:
   pull_request:
