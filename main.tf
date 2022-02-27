@@ -1,3 +1,5 @@
+# terraform/main.tf
+
 #
 # This file describes the infrastructure of the Cete app
 # It builds & maintains both a staging and a production environment

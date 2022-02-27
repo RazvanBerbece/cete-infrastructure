@@ -1,3 +1,10 @@
+# terraform/variables.tf
+
+variable "ENVIRONMENT" {
+  description = "Environment (stg / prd)"
+  type        = string
+}
+
 variable "ARM_CLIENT_ID" {
   description = "Client ID obtained from the Azure SP"
   type        = string
