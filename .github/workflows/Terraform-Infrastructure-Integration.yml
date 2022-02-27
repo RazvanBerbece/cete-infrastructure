@@ -34,7 +34,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
       
       # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
-      # Also create a default environment workspace until needed to switch
+      # Initialised on the 'cete-api-default' workspace. TF will switch the workspace when needed (ie applying) 
       - name: Run 'terraform init'
         id: init
         env:
@@ -42,13 +42,14 @@ jobs:
         run: |
           terraform init
 
-      # On PUSH events to the main branch, APPLY the generated Terraform plan
+      # On PUSH events to the main branch, APPLY the generated Terraform plan to the correct environment
       # Changes workspace based on branch : staging = cete-stg-infra; main = cete-prd-infra
       - name: Run 'terraform apply' (stg)
         if: github.ref == 'refs/heads/staging'
         run: |
           terraform workspace select cete-stg-infra
           terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+      # If the PUSH is to main, it will apply to the current prod state
       - name: Run 'terraform apply' (prd)
         if: github.ref == 'refs/heads/main'
         run: |

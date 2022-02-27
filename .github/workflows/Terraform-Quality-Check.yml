@@ -38,7 +38,7 @@ jobs:
         run: terraform fmt -check
       
       # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
-      # Also create a default environment workspace until needed to switch
+      # Initialised on the 'cete-api-default' workspace. TF will switch the workspace when needed (ie applying) 
       - name: Run 'terraform init'
         id: init
         env:
