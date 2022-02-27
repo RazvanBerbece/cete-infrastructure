@@ -38,8 +38,8 @@ jobs:
       - name: Run 'terraform init'
         id: init
         run: |
-          terraform workspace new default
           terraform init
+          terraform workspace new default
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
       # Changes workspace based on branch : staging = cete-stg-infra; main = cete-prd-infra
