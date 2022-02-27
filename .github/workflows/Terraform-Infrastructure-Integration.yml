@@ -39,9 +39,14 @@ jobs:
         run: terraform init
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
+      # Changes workspace based on branch : staging = cete-stg-infra; main = cete-prd-infra
       - name: Run 'terraform apply' (stg)
         if: github.ref == 'refs/heads/staging'
-        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+        run: |
+        terraform workspace select cete-stg-infra
+        terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
       - name: Run 'terraform apply' (prd)
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
+        run: |
+        terraform workspace select cete-prd-infra
+        terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
