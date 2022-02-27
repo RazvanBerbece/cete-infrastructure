@@ -34,10 +34,11 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
       
       # Init the .terraform.lock.hcl (contains init state for providers, resources, etc.)
-      # Also select the staging environment workspace until told otherwise
+      # Also create a default environment workspace until needed to switch
       - name: Run 'terraform init'
         id: init
         run: |
+          terraform workspace new default
           terraform init
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
