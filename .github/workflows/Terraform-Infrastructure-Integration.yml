@@ -44,6 +44,9 @@ jobs:
         run: exit 1
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
-      - name: Run 'terraform apply'
+      - name: Run 'terraform apply' (stg)
+        if: github.ref == 'refs/heads/staging'
+        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="stg""
+      - name: Run 'terraform apply' (prd)
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -var-file="secrets.tfvars"
+        run: terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
