@@ -37,11 +37,6 @@ jobs:
       - name: Run 'terraform init'
         id: init
         run: terraform init
-      
-      # Fail the workflow with an error if the outcome of 'terraform plan' is an error
-      - name: Check For 'failure' In Terraform Plan Status
-        if: steps.plan.outcome == 'failure' && always()
-        run: exit 1
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan
       - name: Run 'terraform apply' (stg)
