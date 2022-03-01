@@ -17,6 +17,9 @@ jobs:
 
       - uses: actions/checkout@v2
 
+      - name: Set Environment Variables (bash)
+        run: echo "TF_VAR_BUDGET_ADMIN_EMAILS=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+
       - name: Export GitHub Secrets To secrets.tfvars & env
         run: |
           touch secrets.tfvars
@@ -24,7 +27,6 @@ jobs:
           echo -e "ARM_CLIENT_SECRET   = \"${{ secrets.ARM_CLIENT_SECRET }}\"" >> secrets.tfvars
           echo -e "ARM_SUBSCRIPTION_ID = \"${{ secrets.ARM_SUBSCRIPTION_ID }}\"" >> secrets.tfvars
           echo -e "ARM_TENANT_ID       = \"${{ secrets.ARM_TENANT_ID }}\"" >> secrets.tfvars
-          export TF_VAR_BUDGET_ADMIN_EMAILS=${{ secrets.BUDGET_ADMIN_EMAILS }}
 
       # Install Terraform & Terraform Cloud on the job woker + authenticate with the CLOUD TOKEN
       - name: Install Terraform & Authenticate on Terraform Cloud
