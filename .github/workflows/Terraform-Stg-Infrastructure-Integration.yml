@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Set Environment Variables (bash)
-        run: echo "TF_VAR_BUDGET_ADMIN_EMAILS=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
+        run: echo "TF_VAR_BUDGET_ADMIN_EMAILS=${{ secrets.BUDGET_ADMIN_EMAILS }}" >> $GITHUB_ENV
 
       - name: Export GitHub Secrets To secrets.tfvars
         run: |
