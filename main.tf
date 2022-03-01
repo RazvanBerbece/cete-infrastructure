@@ -64,7 +64,7 @@ resource "azurerm_consumption_budget_subscription" "azure-budget" {
     threshold = 2.00
     operator  = "GreaterThanOrEqualTo"
 
-    contact_emails = var.BUDGET_ADMIN_EMAILS
+    contact_emails = tolist(var.BUDGET_ADMIN_EMAILS)
   }
 }
 
