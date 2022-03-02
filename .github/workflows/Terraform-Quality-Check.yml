@@ -20,7 +20,7 @@ jobs:
       - name: Set Environment Variables (bash)
         run: echo "TF_VAR_BUDGET_ADMIN_EMAILS=${{ secrets.BUDGET_ADMIN_EMAILS }}" >> $GITHUB_ENV
 
-      - name: Export GitHub Secrets To secrets.tfvars & env
+      - name: Export GitHub Secrets To secrets.tfvars
         run: |
           touch secrets.tfvars
           echo -e "ARM_CLIENT_ID       = \"${{ secrets.ARM_CLIENT_ID }}\"" >> secrets.tfvars
