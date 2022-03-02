@@ -29,8 +29,8 @@ variable "ARM_TENANT_ID" {
   sensitive   = true
 }
 
-variable "budget_admin_emails" {
+variable "BUDGET_ADMIN_EMAILS" {
   description = "Budget admin email address list for cost notifications"
-  type        = list(any)
+  type        = list(string)
   sensitive   = true
 }
