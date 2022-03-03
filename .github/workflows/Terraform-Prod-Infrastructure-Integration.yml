@@ -17,17 +17,6 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      # - name: Set Environment Variables (bash)
-      #   run: echo "TF_VAR_budget_admin_emails=${{ secrets.BUDGET_ADMIN_EMAILS }}" >> $GITHUB_ENV
-
-      - name: Export GitHub Secrets To secrets.tfvars
-        run: |
-          touch secrets.tfvars
-          echo -e "ARM_CLIENT_ID       = \"${{ secrets.ARM_CLIENT_ID }}\"" >> secrets.tfvars
-          echo -e "ARM_CLIENT_SECRET   = \"${{ secrets.ARM_CLIENT_SECRET }}\"" >> secrets.tfvars
-          echo -e "ARM_SUBSCRIPTION_ID = \"${{ secrets.ARM_SUBSCRIPTION_ID }}\"" >> secrets.tfvars
-          echo -e "ARM_TENANT_ID       = \"${{ secrets.ARM_TENANT_ID }}\"" >> secrets.tfvars
-
       # Install Terraform & Terraform Cloud on the job woker + authenticate with the CLOUD TOKEN
       - name: Install Terraform & Authenticate on Terraform Cloud
         uses: hashicorp/setup-terraform@v1
@@ -49,4 +38,4 @@ jobs:
       - name: Run 'terraform apply' (prd)
         run: |
           terraform workspace select cete-prd-infra
-          terraform apply -auto-approve -var-file="secrets.tfvars" -var="ENVIRONMENT="prd""
+          terraform apply -auto-approve -var="ENVIRONMENT="prd""
