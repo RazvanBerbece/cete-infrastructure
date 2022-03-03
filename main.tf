@@ -36,7 +36,7 @@ provider "azurerm" {
 #################################### CREATE RESOURCES & BUDGET ####################################
 resource "azurerm_resource_group" "cete-rg" {
   name     = "cete-${var.ENVIRONMENT}-rg"
-  location = "centralus"
+  location = "westus"
 
   tags = {
     environment = "${var.ENVIRONMENT}"
