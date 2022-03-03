@@ -129,7 +129,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   offer_type          = "Standard"
   kind                = "MongoDB"
   enable_free_tier    = true
-  
+
   capabilities {
     name = "EnableSQL"
   }
