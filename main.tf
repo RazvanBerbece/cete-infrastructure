@@ -131,7 +131,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   enable_free_tier    = true
 
   capabilities {
-    name = "EnableSQL"
+    name = "EnableTable"
   }
 
   consistency_policy {
