@@ -127,12 +127,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
   offer_type          = "Standard"
-  kind                = "MongoDB"
   enable_free_tier    = true
-
-  capabilities {
-    name = "EnableTable"
-  }
 
   consistency_policy {
     consistency_level       = "BoundedStaleness"
