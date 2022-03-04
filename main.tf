@@ -140,7 +140,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   offer_type          = "Standard"
 
   # Enable 'Free Tier' for staging environment
-  enable_free_tier    = var.ENVIRONMENT == "stg" ? true : false 
+  enable_free_tier = var.ENVIRONMENT == "stg" ? true : false
 
   consistency_policy {
     consistency_level       = "BoundedStaleness"
