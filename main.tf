@@ -101,13 +101,14 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
   retention_in_days   = 30
   daily_quota_gb      = 0.5
 
-  # Disable insights for now
-  internet_ingestion_enabled = false
-  internet_query_enabled     = false
-
   tags = {
     environment = "${var.ENVIRONMENT}"
   }
+
+  # Access Rules (Firewall) - disable all access from outside the Azure network
+  internet_ingestion_enabled = false
+  internet_query_enabled     = false
+
 }
 
 resource "azurerm_function_app" "cete-function-app" {
@@ -119,9 +120,6 @@ resource "azurerm_function_app" "cete-function-app" {
   storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
   os_type                    = "linux"
 
-  # Disable Func App for now
-  enabled = false
-
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"       = "node",
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_log_analytics_workspace.cete-application-insights.primary_shared_key,
@@ -130,6 +128,9 @@ resource "azurerm_function_app" "cete-function-app" {
   tags = {
     environment = "${var.ENVIRONMENT}"
   }
+
+  # Disable Func App for now
+  enabled = false
 }
 
 resource "azurerm_cosmosdb_account" "cosmos-db-account" {
@@ -137,7 +138,9 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
   offer_type          = "Standard"
-  enable_free_tier    = true
+
+  # Enable 'Free Tier' for staging environment
+  enable_free_tier = var.ENVIRONMENT == "stg" ? true : false
 
   consistency_policy {
     consistency_level       = "BoundedStaleness"
@@ -150,9 +153,10 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
     failover_priority = 0
   }
 
-  tags = {
-    environment = "${var.ENVIRONMENT}"
-  }
+  # Access Rules (Firewall)
+  public_network_access_enabled = false
+  ip_range_filter               = var.DEV_IP_LIST
+
 }
 
 resource "azurerm_cosmosdb_sql_database" "cete-id-indexing-db" {
