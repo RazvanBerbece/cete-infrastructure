@@ -50,7 +50,7 @@ resource "azurerm_consumption_budget_subscription" "azure-budget" {
   name            = "cete-${var.ENVIRONMENT}-budget"
   subscription_id = data.azurerm_subscription.current.id
 
-  amount     = 1
+  amount     = 2.50
   time_grain = "Monthly"
 
   time_period {
@@ -60,13 +60,12 @@ resource "azurerm_consumption_budget_subscription" "azure-budget" {
 
   notification {
     enabled   = true
-    threshold = 2.00
+    threshold = 10.00
     operator  = "GreaterThanOrEqualTo"
 
     contact_emails = var.BUDGET_ADMIN_EMAILS
   }
 }
-
 
 resource "azurerm_storage_account" "cete-storage-account" {
   name                     = "cete${var.ENVIRONMENT}storageacc"
@@ -100,6 +99,11 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
   retention_in_days   = 30
+  daily_quota_gb      = 0.5
+
+  # Disable insights for now
+  internet_ingestion_enabled = false
+  internet_query_enabled     = false
 
   tags = {
     environment = "${var.ENVIRONMENT}"
@@ -114,6 +118,9 @@ resource "azurerm_function_app" "cete-function-app" {
   storage_account_name       = azurerm_storage_account.cete-storage-account.name
   storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
   os_type                    = "linux"
+
+  # Disable Func App for now
+  enabled = false
 
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"       = "node",

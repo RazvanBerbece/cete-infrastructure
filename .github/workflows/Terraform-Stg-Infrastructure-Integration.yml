@@ -12,6 +12,7 @@ jobs:
 
     name: Terraform Integration (stg)
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
 
