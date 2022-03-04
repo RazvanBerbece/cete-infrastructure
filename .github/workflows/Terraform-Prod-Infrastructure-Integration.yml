@@ -12,6 +12,7 @@ jobs:
 
     name: Terraform Integration (prd)
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
 
