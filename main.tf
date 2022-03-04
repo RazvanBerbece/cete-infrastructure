@@ -33,6 +33,9 @@ provider "azurerm" {
 
 }
 
+#################################### ALIASES ####################################
+data "azurerm_subscription" "current" {}
+
 #################################### CREATE RESOURCES & BUDGET ####################################
 resource "azurerm_resource_group" "cete-rg" {
   name     = "cete-${var.ENVIRONMENT}-rg"
@@ -45,7 +48,7 @@ resource "azurerm_resource_group" "cete-rg" {
 
 resource "azurerm_consumption_budget_subscription" "azure-budget" {
   name            = "cete-${var.ENVIRONMENT}-budget"
-  subscription_id = var.ARM_SUBSCRIPTION_ID
+  subscription_id = data.azurerm_subscription.current.id
 
   amount     = 1
   time_grain = "Monthly"
