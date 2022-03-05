@@ -5,7 +5,7 @@
 # It builds & maintains different environments (staging & production), as they share the same infrastructure
 #
 
-#################################### INIT AZURE PROVIDER & TERRAFORM CLOUD ####################################
+##### INIT AZURE PROVIDER & TERRAFORM CLOUD 
 terraform {
   # Terraform Cloud block
   cloud {
@@ -27,16 +27,16 @@ terraform {
   required_version = ">= 1.1.0" # force minimum vers 1.1.0 on the Terraform version
 }
 
-#################################### PASS VARS TO AZURE ####################################
+#### PASS VARS TO AZURE 
 provider "azurerm" {
   features {}
 
 }
 
-#################################### ALIASES ####################################
+##### ALIASES 
 data "azurerm_subscription" "current" {}
 
-#################################### CREATE RESOURCES & BUDGET ####################################
+##### CREATE RESOURCES & BUDGET 
 resource "azurerm_resource_group" "cete-rg" {
   name     = "cete-${var.ENVIRONMENT}-rg"
   location = "westus"
