@@ -46,26 +46,27 @@ resource "azurerm_resource_group" "cete-rg" {
   }
 }
 
-resource "azurerm_consumption_budget_subscription" "azure-budget" {
-  name            = "cete-${var.ENVIRONMENT}-budget"
-  subscription_id = data.azurerm_subscription.current.id
+# Azure for Students does not allow access to the Budget scope
+# resource "azurerm_consumption_budget_subscription" "azure-budget" {
+#   name            = "cete-${var.ENVIRONMENT}-budget"
+#   subscription_id = data.azurerm_subscription.current.id
 
-  amount     = 2.50
-  time_grain = "Monthly"
+#   amount     = 2.50
+#   time_grain = "Monthly"
 
-  time_period {
-    start_date = "2022-03-01T00:00:00Z"
-    end_date   = "2022-12-01T00:00:00Z"
-  }
+#   time_period {
+#     start_date = "2022-03-01T00:00:00Z"
+#     end_date   = "2022-12-01T00:00:00Z"
+#   }
 
-  notification {
-    enabled   = true
-    threshold = 10.00
-    operator  = "GreaterThanOrEqualTo"
+#   notification {
+#     enabled   = true
+#     threshold = 10.00
+#     operator  = "GreaterThanOrEqualTo"
 
-    contact_emails = var.BUDGET_ADMIN_EMAILS
-  }
-}
+#     contact_emails = var.BUDGET_ADMIN_EMAILS
+#   }
+# }
 
 resource "azurerm_storage_account" "cete-storage-account" {
   name                     = "cete${var.ENVIRONMENT}storageacc"
@@ -128,9 +129,6 @@ resource "azurerm_function_app" "cete-function-app" {
   tags = {
     environment = "${var.ENVIRONMENT}"
   }
-
-  # Disable Func App for now
-  enabled = false
 }
 
 resource "azurerm_cosmosdb_account" "cosmos-db-account" {
