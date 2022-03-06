@@ -163,12 +163,12 @@ resource "azurerm_cosmosdb_sql_database" "cete-id-indexing-db" {
   throughput          = 400
 }
 
-resource "azurerm_cosmosdb_sql_container" "example" {
-  name                  = "Indexes"
+resource "azurerm_cosmosdb_sql_container" "cete-sql-container" {
+  name                  = "Cetes"
   resource_group_name   = azurerm_cosmosdb_account.cosmos-db-account.resource_group_name
   account_name          = azurerm_cosmosdb_account.cosmos-db-account.name
   database_name         = azurerm_cosmosdb_sql_database.cete-id-indexing-db.name
-  partition_key_path    = "/id/flag"
+  partition_key_path    = "/id"
   partition_key_version = 1
   throughput            = 400
 }
