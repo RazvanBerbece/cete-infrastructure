@@ -173,3 +173,8 @@ resource "azurerm_cosmosdb_sql_container" "cete-sql-container" {
   throughput            = 400
 }
 
+resource "azurerm_storage_container" "cete-storage-container" {
+  name                  = "Cetes"
+  storage_account_name  = azurerm_storage_account.cete-storage-account.name
+  container_access_type = "private"
+}
