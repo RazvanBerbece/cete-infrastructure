@@ -174,7 +174,7 @@ resource "azurerm_cosmosdb_sql_container" "cete-sql-container" {
 }
 
 resource "azurerm_storage_container" "cete-storage-container" {
-  name                  = "Cetes"
+  name                  = "cetes"
   storage_account_name  = azurerm_storage_account.cete-storage-account.name
   container_access_type = "private"
 }
