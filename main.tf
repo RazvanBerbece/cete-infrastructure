@@ -99,7 +99,7 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
   name                = "cete-${var.ENVIRONMENT}-app-insights"
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
-  retention_in_days   = 30
+  retention_in_days   = 30 # 7 for free tier
   daily_quota_gb      = 0.5
 
   tags = {
@@ -107,8 +107,8 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
   }
 
   # Access Rules (Firewall) - disable all access from outside the Azure network
-  internet_ingestion_enabled = false
-  internet_query_enabled     = false
+  internet_ingestion_enabled = true
+  internet_query_enabled     = true
 
 }
 
