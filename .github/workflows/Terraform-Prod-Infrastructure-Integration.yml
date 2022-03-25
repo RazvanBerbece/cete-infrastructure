@@ -3,6 +3,10 @@ name: terraform-prd-infra-deploy
 on:
   push:
     branches: [ main ]
+    paths:
+    - '*.tf'
+    - '.terraform/**'
+    - '.terraform.lock.hcl'
 
   workflow_dispatch:
 
