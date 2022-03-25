@@ -124,7 +124,9 @@ resource "azurerm_linux_function_app" "cete-function-app" {
 
   builtin_logging_enabled = "false"
 
-  site_config {}
+  site_config {
+    worker_count = 1
+  }
 
   tags = {
     environment = "${var.ENVIRONMENT}"
