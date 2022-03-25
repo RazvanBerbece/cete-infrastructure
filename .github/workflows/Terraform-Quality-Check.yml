@@ -36,7 +36,7 @@ jobs:
         env:
           TF_WORKSPACE: cete-api-default
         run: |
-          terraform init
+          terraform init -upgrade
       
       # Check that main.tf is syntactically correct & indented 
       - name: Run 'terraform validate'
