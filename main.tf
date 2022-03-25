@@ -122,6 +122,8 @@ resource "azurerm_linux_function_app" "cete-function-app" {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_log_analytics_workspace.cete-application-insights.primary_shared_key,
   }
 
+  builtin_logging_enabled = "false"
+
   site_config {}
 
   tags = {
