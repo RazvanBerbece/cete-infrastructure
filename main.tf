@@ -24,7 +24,7 @@ terraform {
     }
   }
 
-  required_version = ">= 1.1.0" # force minimum vers 1.1.0 on the Terraform version
+  required_version = ">= 1.1.6" # force minimum vers 1.1.0 on the Terraform version
 }
 
 #### PASS VARS TO AZURE 
