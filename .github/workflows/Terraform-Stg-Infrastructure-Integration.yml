@@ -32,7 +32,7 @@ jobs:
         env:
           TF_WORKSPACE: cete-api-default
         run: |
-          terraform init
+          terraform init -upgrade
 
       # On PUSH events to the main branch, APPLY the generated Terraform plan to the correct environment
       # Changes workspace based on branch : staging = cete-stg-infra; main = cete-prd-infra

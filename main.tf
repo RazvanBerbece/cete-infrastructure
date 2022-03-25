@@ -20,7 +20,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 2.65"
+      version = "=3.0.1"
     }
   }
 
@@ -80,15 +80,12 @@ resource "azurerm_storage_account" "cete-storage-account" {
   }
 }
 
-resource "azurerm_app_service_plan" "cete-func-service-plan" {
+resource "azurerm_service_plan" "cete-func-service-plan" {
   name                = "cete-func-${var.ENVIRONMENT}-service-plan"
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
-
-  sku {
-    tier = "Free"
-    size = "S1"
-  }
+  os_type             = "Linux"
+  sku_name            = "FREE"
 
   tags = {
     environment = "${var.ENVIRONMENT}"
@@ -112,19 +109,20 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
 
 }
 
-resource "azurerm_function_app" "cete-function-app" {
+resource "azurerm_linux_function_app" "cete-function-app" {
   name                       = "cete-${var.ENVIRONMENT}-api"
   location                   = azurerm_resource_group.cete-rg.location
   resource_group_name        = azurerm_resource_group.cete-rg.name
-  app_service_plan_id        = azurerm_app_service_plan.cete-func-service-plan.id
+  service_plan_id            = azurerm_service_plan.cete-func-service-plan.id
   storage_account_name       = azurerm_storage_account.cete-storage-account.name
   storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
-  os_type                    = "linux"
 
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"       = "node",
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_log_analytics_workspace.cete-application-insights.primary_shared_key,
   }
+
+  site_config {}
 
   tags = {
     environment = "${var.ENVIRONMENT}"
