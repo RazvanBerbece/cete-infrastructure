@@ -3,6 +3,8 @@ name: terraform-stg-infra-deploy
 on:
   push:
     branches: [ staging ]
+    paths:
+      - ['*.tf', '.terraform/**', '.terraform.lock.hcl']
 
   workflow_dispatch:
 
