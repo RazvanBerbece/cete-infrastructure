@@ -3,8 +3,8 @@ name: terraform-quality-check
 on:
   pull_request:
     branches: [ '**' ]
-  paths:
-      - ['*.tf', '.terraform/**', '.terraform.lock.hcl']
+    paths:
+    - ['*.tf', '.terraform/**', '.terraform.lock.hcl']
 
   workflow_dispatch:
 
