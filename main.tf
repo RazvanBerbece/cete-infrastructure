@@ -85,7 +85,7 @@ resource "azurerm_service_plan" "cete-func-service-plan" {
   location            = azurerm_resource_group.cete-rg.location
   resource_group_name = azurerm_resource_group.cete-rg.name
   os_type             = "Linux"
-  sku_name            = "FREE"
+  sku_name            = "F1"
 
   tags = {
     environment = "${var.ENVIRONMENT}"
