@@ -118,14 +118,26 @@ resource "azurerm_linux_function_app" "cete-function-app" {
   storage_account_access_key = azurerm_storage_account.cete-storage-account.primary_access_key
 
   app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME"       = "node",
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_log_analytics_workspace.cete-application-insights.primary_shared_key,
   }
 
   builtin_logging_enabled = "false"
 
   site_config {
+
+    # Worker Config
     worker_count = 1
+    application_stack {
+      node_version = 14
+    }
+
+    # Access Rule (Firewall)
+    ip_restriction {
+      name       = "Antonio@LocalDev"
+      action     = "Allow"
+      ip_address = var.DEV_IP_LIST
+    }
+
   }
 
   tags = {
