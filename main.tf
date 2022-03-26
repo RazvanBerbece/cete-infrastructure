@@ -131,11 +131,16 @@ resource "azurerm_linux_function_app" "cete-function-app" {
       node_version = 14
     }
 
-    # Access Rule (Firewall)
+    # Access Rules (Firewall)
     ip_restriction {
       name       = "Antonio@LocalDev"
       action     = "Allow"
-      ip_address = var.DEV_IP_LIST
+      ip_address = var.DEV_IP_LIST[0]
+    }
+    ip_restriction {
+      name       = "Antonio@LocalDevPublic"
+      action     = "Allow"
+      ip_address = var.DEV_IP_LIST[1]
     }
 
   }
