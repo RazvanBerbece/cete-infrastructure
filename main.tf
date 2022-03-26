@@ -135,12 +135,12 @@ resource "azurerm_linux_function_app" "cete-function-app" {
     ip_restriction {
       name       = "Antonio@LocalDev"
       action     = "Allow"
-      ip_address = var.DEV_IP_LIST[0]
+      ip_address = element(var.DEV_IP_LIST, 0)
     }
     ip_restriction {
       name       = "Antonio@LocalDevPublic"
       action     = "Allow"
-      ip_address = var.DEV_IP_LIST[1]
+      ip_address = element(var.DEV_IP_LIST, 1)
     }
 
   }
@@ -171,7 +171,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   }
 
   # Access Rules (Firewall)
-  ip_range_filter = var.DEV_IP_LIST
+  ip_range_filter = element(var.DEV_IP_LIST, 0)
 
 }
 

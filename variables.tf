@@ -42,7 +42,7 @@ variable "BUDGET_ADMIN_EMAILS" {
 
 variable "DEV_IP_LIST" {
   description = "IP List of allowed IPs to access / use infrastructure"
-  type        = string
+  type        = list(string)
   sensitive   = true
-  default     = ""
+  default     = []
 }
