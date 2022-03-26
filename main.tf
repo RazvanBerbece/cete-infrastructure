@@ -171,7 +171,7 @@ resource "azurerm_cosmosdb_account" "cosmos-db-account" {
   }
 
   # Access Rules (Firewall)
-  ip_range_filter = element(var.DEV_IP_LIST, 0)
+  ip_range_filter = join(",", var.DEV_IP_LIST)
 
 }
 
