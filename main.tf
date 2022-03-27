@@ -22,24 +22,19 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "=3.0.1"
     }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = ">=2.19.1"
-    }
   }
 
   required_version = ">= 1.1.6" # force minimum vers 1.1.0 on the Terraform version
 }
 
-##### INIT PROVIDERS
+#### PASS VARS TO AZURE 
 provider "azurerm" {
   features {}
+
 }
-provider "azuread" {}
 
 ##### ALIASES 
 data "azurerm_subscription" "current" {}
-data "azuread_client_config" "currentADClient" {}
 
 ##### CREATE RESOURCES & BUDGET 
 resource "azurerm_resource_group" "cete-rg" {
@@ -114,69 +109,6 @@ resource "azurerm_log_analytics_workspace" "cete-application-insights" {
 
 }
 
-##### REGISTER APP ON AZURE AD
-##### IDs for scopes & roles are arbitrarily generated and kept
-resource "azuread_application" "cete-ad-app" {
-  display_name     = "cete-${var.ENVIRONMENT}-api-app"
-  identifier_uris  = ["https://cete-${var.ENVIRONMENT}-api.azurewebsites.net"]
-  owners           = [data.azuread_client_config.currentADClient.object_id]
-  sign_in_audience = "AzureADMyOrg"
-
-  api {
-    oauth2_permission_scope {
-      admin_consent_description  = "Allow the application to access example on behalf of the signed-in user."
-      admin_consent_display_name = "Access cete-${var.ENVIRONMENT}-api"
-      user_consent_description   = "Allow the application to access example on behalf of the signed-in user."
-      user_consent_display_name  = "Access cete-${var.ENVIRONMENT}-api"
-      enabled                    = true
-      id                         = "96183846-204b-4b43-82e1-5d2222eb4b9b"
-      type                       = "User"
-      value                      = "user_impersonation"
-    }
-  }
-
-  app_role {
-    allowed_member_types = ["User", "Application"]
-    description          = "Admins can manage roles and perform all task actions"
-    display_name         = "Admin"
-    enabled              = true
-    id                   = "1b19509b-32b1-4e9f-b71d-4992aa991967"
-    value                = "admin"
-  }
-
-  app_role {
-    allowed_member_types = ["User"]
-    description          = "ReadOnly roles have limited query access"
-    display_name         = "ReadOnly"
-    enabled              = true
-    id                   = "497406e4-012a-4267-bf18-45a1cb148a01"
-    value                = "User"
-  }
-
-  required_resource_access {
-    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
-
-    resource_access {
-      id   = "df021288-bdef-4463-88db-98f22de89214" # User.Read.All
-      type = "Role"
-    }
-
-    resource_access {
-      id   = "b4e74841-8e56-480b-be8b-910348b18b4c" # User.ReadWrite
-      type = "Scope"
-    }
-  }
-
-  web {
-    redirect_uris = ["https://cete-${var.ENVIRONMENT}-api.azurewebsites.net/.auth/login/aad/callback"]
-
-    implicit_grant {
-      access_token_issuance_enabled = true
-      id_token_issuance_enabled     = true
-    }
-  }
-}
-
 resource "azurerm_linux_function_app" "cete-function-app" {
   name                       = "cete-${var.ENVIRONMENT}-api"
   location                   = azurerm_resource_group.cete-rg.location
@@ -190,14 +122,6 @@ resource "azurerm_linux_function_app" "cete-function-app" {
   }
 
   builtin_logging_enabled = "false"
-
-  // Auth
-  auth_settings {
-    enabled = true
-    microsoft {
-      client_id = azuread_application.cete-ad-app.application_id
-    }
-  }
 
   site_config {
 
@@ -224,10 +148,6 @@ resource "azurerm_linux_function_app" "cete-function-app" {
   tags = {
     environment = "${var.ENVIRONMENT}"
   }
-
-  depends_on = [
-    azuread_application.cete-ad-app,
-  ]
 }
 
 resource "azurerm_cosmosdb_account" "cosmos-db-account" {
